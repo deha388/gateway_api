@@ -25,19 +25,18 @@ def index():
         common.add_log(bp_name, msg)
         return jsonify({"msg": msg}), 400
 
+    # get alias
+    #user_res=list , index[0] gives us current user
     user_obj = user_res[0]
+    #Column alias in user_obj gives us ocr_test
     alias_name = user_obj.alias
+    #if alias_name is exist,that will be match up
     alias_res = alias_model.AliasRepository().get_by_name(alias_name)
 
     if len(alias_res) < 1:
         msg = "User doesn't match any alias"
         common.add_log(bp_name, msg)
         return jsonify({"msg": msg}), 400
-
-    if alias_name != common.control_auth_for_routes(bp_name):
-        msg = "User doesn't authorize to use this endpoint"
-        common.add_log(bp_name, msg)
-        return  jsonify({"msg": msg}), 403
 
     # alias authorization check
     if alias_name != common.control_auth_for_routes(bp_name):
@@ -47,10 +46,12 @@ def index():
 
     alias_obj = alias_res[0]
 
+    #add log table, logging process
     id_ = str(uuid.uuid4())
     log = {"id": id_, "username": dec_payload, "alias_name": alias_name}
     userrequestlogs_model.UserRequestLogsRepository().add_log(log)
 
+    #call alias_factory
     clients_res = alias_factory.get(alias_obj).get_customers()
     userrequestlogs_model.UserRequestLogsRepository().update_status(log, 200)
     return jsonify(data=clients_res), 200

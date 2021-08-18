@@ -10,11 +10,10 @@ import src.utils.providers.alias_factory as alias_factory
 from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
-bp_name = 'api_ocr_trigger'
-api_ocr_trigger_bp = Blueprint(bp_name, __name__)
+bp_name = 'api_rasa_trigger'
+api_rasa_trigger_bp = Blueprint(bp_name, __name__)
 
-
-@api_ocr_trigger_bp.route('/', methods=["GET"])
+@api_rasa_trigger_bp.route('/', methods=["GET"])
 @jwt_required()
 def index():
     # extract info from body
@@ -29,11 +28,8 @@ def index():
         return jsonify({"msg": msg}), 400
 
     # get alias
-    #user_res=list , index[0] gives us current user
     user_obj = user_res[0]
-    #Column alias in user_obj gives us ocr_test
     alias_name = user_obj.alias
-    #if alias_name is exist,that will be match up
     alias_res = alias_model.AliasRepository().get_by_name(alias_name)
     if len(alias_res) < 1:
         msg = "User doesn't match any alias"
@@ -51,12 +47,12 @@ def index():
     # logging for request
     id_ = str(uuid.uuid4())
     log = {"id": id_, "username": dec_payload, "alias_name": alias_name}
-    userrequestlogs_model.UserRequestLogsRepository().add_log(log)
-
-    # the main function to execute #call alias_factory
-    trigger_res, trigger_res_status = alias_factory.get(alias_obj).trigger_process()
-
-    # logging for request status
-
-    userrequestlogs_model.UserRequestLogsRepository().update_status(log, trigger_res_status)
-    return jsonify(data=trigger_res), trigger_res_status
+    # userrequestlogs_model.UserRequestLogsRepository().add_log(log)
+    #
+    # # the main function to execute
+    # trigger_res, trigger_res_status = alias_factory.get(alias_obj).trigger_process()
+    #
+    # # logging for request status
+    # userrequestlogs_model.UserRequestLogsRepository().update_status(log, trigger_res_status)
+    # return jsonify(data=trigger_res), trigger_res_status
+    return "success"
