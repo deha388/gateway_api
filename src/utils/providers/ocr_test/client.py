@@ -16,3 +16,4 @@ class Client:
         service_url = credentials["url"]
         self.api_ocr = trigger.Ocr(service_url)
         return self.api_ocr.trigger_process()
+

@@ -59,4 +59,4 @@ def index():
     # logging for request status
 
     userrequestlogs_model.UserRequestLogsRepository().update_status(log, trigger_res_status)
-    return jsonify(data=trigger_res), trigger_res_status
+    return jsonify(data=trigger_res), trigger_res_status #string value
